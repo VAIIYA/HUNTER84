@@ -9,7 +9,7 @@ export function useGameStats(walletAddress?: string) {
     const [loading, setLoading] = useState(false);
 
     const fetchStats = async () => {
-        if (!walletAddress) return;
+        if (!walletAddress || !db) return;
         setLoading(true);
         try {
             const result = await db.select().from(players).where(eq(players.walletAddress, walletAddress)).get();
@@ -22,6 +22,7 @@ export function useGameStats(walletAddress?: string) {
     };
 
     const fetchLeaderboard = async () => {
+        if (!db) return;
         try {
             const result = await db.select().from(leaderboard).orderBy(desc(leaderboard.score)).limit(10).all();
             setTopScores(result);
@@ -31,7 +32,7 @@ export function useGameStats(walletAddress?: string) {
     };
 
     const saveScore = async (score: number, kills: number) => {
-        if (!walletAddress) return;
+        if (!walletAddress || !db) return;
         try {
             // Upsert player stats
             const existing = await db.select().from(players).where(eq(players.walletAddress, walletAddress)).get();
