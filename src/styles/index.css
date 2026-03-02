@@ -1,11 +1,16 @@
 :root {
-  /* Modern Duck Hunt NES Color Palette */
-  --primary: #5BC0EB; /* Sky blue */
-  --secondary: #9BC53D; /* Grass green */
-  --accent: #E55934; /* Duck beak/red */
-  --retro-brown: #332111; /* Dog/Earth */
-  --retro-light: #FDE74C; /* Score area */
-  
+  /* Modern Hunter84 NES Color Palette */
+  --primary: #5BC0EB;
+  /* Sky blue */
+  --secondary: #9BC53D;
+  /* Grass green */
+  --accent: #E55934;
+  /* Duck beak/red */
+  --retro-brown: #332111;
+  /* Dog/Earth */
+  --retro-light: #FDE74C;
+  /* Score area */
+
   --bg-dark: #0a0a0c;
   --glass: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -26,10 +31,12 @@ body {
   background-color: var(--bg-dark);
   color: white;
   font-family: var(--font-modern);
-  overflow: hidden; /* Game is fixed screen */
+  overflow: hidden;
+  /* Game is fixed screen */
 }
 
-h1, .retro-text {
+h1,
+.retro-text {
   font-family: var(--font-retro);
   text-transform: uppercase;
   letter-spacing: 1px;

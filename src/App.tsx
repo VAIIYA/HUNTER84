@@ -6,7 +6,7 @@ import { Menu, Play, Users, User, Trophy, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './styles/index.css';
 
-// Duck Hunt Game UI/Logic types
+// HUNTER 84 Game UI/Logic types
 type GameState = 'start' | 'playing' | 'leaderboard' | 'profile';
 
 import { GameEngine } from './game/GameEngine';
@@ -60,7 +60,7 @@ const StartScreen = ({ onStart, onViewLeaderboard, onViewProfile }: any) => (
         className="ui-layer interactive" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '40px' }}
     >
         <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: '4rem', textShadow: '4px 4px 0 var(--accent)', marginBottom: '10px' }}>DUCK HUNT</h1>
+            <h1 style={{ fontSize: '4rem', textShadow: '4px 4px 0 var(--accent)', marginBottom: '10px' }}>HUNTER 84</h1>
             <p style={{ opacity: 0.7, letterSpacing: '2px' }}>FOR SOLANA INTEROPERABILITY</p>
         </div>
 
