@@ -31,32 +31,50 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
 
     const gameRef = useRef<HTMLDivElement>(null);
     const duckIdCounter = useRef(0);
+    const isSpawningRef = useRef(false);
 
     // Spawn Logic
     const spawnDuck = useCallback(() => {
-        if (ducksSpawned >= MAX_DUCKS) return;
+        if (ducksSpawned >= MAX_DUCKS) {
+            isSpawningRef.current = false;
+            return;
+        }
 
         const w = window.innerWidth || 800;
         const h = window.innerHeight || 600;
 
-        setDucksSpawned(prev => prev + 1);
-        const speed = 4 + (ducksSpawned * 0.3);
-        const angle = (Math.random() * Math.PI / 4) + Math.PI / 4; // More vertical
+        const speed = 4 + (ducksSpawned * 0.4);
+        const angle = (Math.random() * Math.PI / 4) + Math.PI / 4;
 
         const newDuck: Duck = {
             id: duckIdCounter.current++,
             x: Math.random() * (w - DUCK_SIZE),
-            y: h - 180, // Start above the grass line
+            y: h - 180,
             vx: Math.cos(angle) * speed * (Math.random() > 0.5 ? 1 : -1),
             vy: -Math.sin(angle) * speed,
             status: 'flying',
             variant: ['normal', 'blue', 'red'][Math.floor(Math.random() * 3)] as any,
             frame: 0
         };
-        console.log('Spawning duck:', newDuck);
+
         setDucks(prev => [...prev, newDuck]);
+        setDucksSpawned(prev => prev + 1);
         setAmmo(3);
+        isSpawningRef.current = false;
     }, [ducksSpawned]);
+
+    // Spawner Loop
+    useEffect(() => {
+        const checkSpawn = () => {
+            const flyingDucks = ducks.filter(d => d.status === 'flying').length;
+            if (ducksSpawned < MAX_DUCKS && flyingDucks === 0 && !isSpawningRef.current) {
+                isSpawningRef.current = true;
+                setTimeout(spawnDuck, 500);
+            }
+        };
+        checkSpawn();
+    }, [ducks.length, ducksSpawned, spawnDuck]);
+    // Notice: we only depend on length, not the full ducks array which changes every frame.
 
     // Main Physics Loop
     useEffect(() => {
@@ -64,8 +82,8 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
             setDucks(currentDucks => {
                 return currentDucks.map(duck => {
                     if (duck.status !== 'flying') {
-                        if (duck.status === 'hit' && duck.y < window.innerHeight) {
-                            return { ...duck, y: duck.y + 10, frame: 2 }; // Falling
+                        if (duck.status === 'hit' && duck.y < window.innerHeight + 100) {
+                            return { ...duck, y: duck.y + 12 };
                         }
                         return duck;
                     }
@@ -75,7 +93,6 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
                     let nextVx = duck.vx;
                     let nextVy = duck.vy;
 
-                    // Bounce off walls (DVD Style)
                     if (nextX <= 0 || nextX >= window.innerWidth - DUCK_SIZE) {
                         nextVx = -nextVx;
                         nextX = duck.x + nextVx;
@@ -85,15 +102,13 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
                         nextY = duck.y + nextVy;
                     }
 
-                    // Bottom boundary for "falling" ducks is handled above
-
                     return {
                         ...duck,
                         x: nextX,
                         y: nextY,
                         vx: nextVx,
                         vy: nextVy,
-                        frame: (duck.frame + 0.1) % 2 // Animation toggle
+                        frame: (duck.frame + 0.15) % 2
                     };
                 });
             });
@@ -102,17 +117,15 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
         return () => clearInterval(interval);
     }, []);
 
-    // Spawner and Win Check
+    // Game Over Check
     useEffect(() => {
-        if (ducksSpawned < MAX_DUCKS && ducks.filter(d => d.status === 'flying').length === 0) {
-            const timeout = setTimeout(spawnDuck, 300);
-            return () => clearTimeout(timeout);
+        if (ducksSpawned >= MAX_DUCKS && ducks.length > 0) {
+            const allDucksDone = ducks.every(d => d.status !== 'flying' && d.y > window.innerHeight);
+            if (allDucksDone) {
+                onGameOver(score, Math.floor(score / 100));
+            }
         }
-
-        if (ducksSpawned >= MAX_DUCKS && ducks.length > 0 && ducks.every(d => d.status !== 'flying' && d.y > window.innerHeight)) {
-            onGameOver(score, Math.floor(score / 100));
-        }
-    }, [ducks, ducksSpawned, spawnDuck, onGameOver, score]);
+    }, [ducks, ducksSpawned, onGameOver, score]);
 
     const handleShoot = (e: React.MouseEvent | React.TouchEvent, duckId?: number) => {
         if (ammo <= 0) return;
@@ -160,13 +173,13 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
                         height: DUCK_SIZE,
                         zIndex: 20,
                         transform: `scaleX(${duck.vx > 0 ? 1 : -1})`,
-                        transition: duck.status === 'hit' ? 'none' : 'transform 0.1s linear',
+                        transition: duck.status === 'hit' ? 'none' : 'transform 0.05s linear',
                         pointerEvents: duck.status === 'flying' ? 'auto' : 'none'
                     }}
                     onClick={(e) => { e.stopPropagation(); handleShoot(e, duck.id); }}
                 >
                     <img
-                        src={duck.status === 'hit' ? '/assets/duck_up.png' : (Math.floor(duck.frame) === 0 ? '/assets/duck_up.png' : '/assets/duck_down.png')}
+                        src={Math.floor(duck.frame) === 0 ? '/assets/duck_up.png' : '/assets/duck_down.png'}
                         alt="Duck"
                         style={{
                             width: '100%',
