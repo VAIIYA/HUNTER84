@@ -56,26 +56,46 @@ const App = () => {
 
 const StartScreen = ({ onStart, onViewLeaderboard, onViewProfile }: any) => (
     <motion.div
-        initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }}
-        className="ui-layer interactive" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '40px' }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="ui-layer interactive" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)' }}
     >
-        <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: '4rem', textShadow: '4px 4px 0 var(--accent)', marginBottom: '10px' }}>HUNTER 84</h1>
-            <p style={{ opacity: 0.7, letterSpacing: '2px' }}>FOR SOLANA INTEROPERABILITY</p>
+        <div style={{ position: 'absolute', top: '15%', textAlign: 'center' }}>
+            <motion.h1
+                initial={{ y: -50 }} animate={{ y: 0 }}
+                style={{ fontSize: '5rem', textShadow: '8px 8px 0 var(--accent)', marginBottom: '10px', letterSpacing: '4px' }}
+            >
+                HUNTER 84
+            </motion.h1>
+            <p style={{ opacity: 0.6, letterSpacing: '4px', fontStyle: 'italic' }}>RETRO SHOOTER . SOLANA NATIVE . 2026</p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '300px' }}>
-            <button onClick={onStart} className="glass-panel menu-btn" style={{ padding: '20px', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                <Play fill="white" /> <span className="retro-text">NEW GAME</span>
-            </button>
-            <button onClick={onViewLeaderboard} className="glass-panel menu-btn" style={{ padding: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                <Trophy /> <span className="retro-text">LEADERBOARD</span>
-            </button>
-            <button onClick={onViewProfile} className="glass-panel menu-btn" style={{ padding: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                <User /> <span className="retro-text">PROFILE</span>
-            </button>
+        <div style={{ display: 'flex', gap: '25px', width: '100%', maxWidth: '900px', padding: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <MenuCard icon={<Play size={32} fill="white" />} label="HUNT NOW" color="var(--accent)" onClick={onStart} description="Start a new round" />
+            <MenuCard icon={<Trophy size={32} />} label="RANKINGS" color="var(--glass-border)" onClick={onViewLeaderboard} description="Top survivalists" />
+            <MenuCard icon={<User size={32} />} label="PROFILE" color="var(--glass-border)" onClick={onViewProfile} description="Stats & Wallet" />
+        </div>
+
+        <div style={{ position: 'absolute', bottom: '10%', opacity: 0.3, fontSize: '10px' }} className="retro-text">
+            MINTED ON SOLANA | PROTECTED BY HUNTER PROTOCOL
         </div>
     </motion.div>
+);
+
+const MenuCard = ({ icon, label, color, onClick, description }: any) => (
+    <motion.button
+        whileHover={{ scale: 1.05, y: -5 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onClick}
+        className="glass-panel"
+        style={{
+            width: '260px', padding: '40px 20px', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: '20px', background: color === 'var(--accent)' ? 'var(--accent)' : 'var(--glass)'
+        }}
+    >
+        <div style={{ marginBottom: '10px' }}>{icon}</div>
+        <div className="retro-text" style={{ fontSize: '16px' }}>{label}</div>
+        <div style={{ fontSize: '12px', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '1px' }}>{description}</div>
+    </motion.button>
 );
 
 const Leaderboard = ({ onBack, items }: any) => (
