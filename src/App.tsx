@@ -66,7 +66,7 @@ const StartScreen = ({ onStart, onViewLeaderboard, onViewProfile }: any) => (
             >
                 HUNTER 84
             </motion.h1>
-            <p style={{ opacity: 0.6, letterSpacing: '4px', fontStyle: 'italic' }}>RETRO SHOOTER . SOLANA NATIVE . 2026</p>
+            <p style={{ opacity: 0.6, letterSpacing: '4px', fontStyle: 'italic' }}>RETRO SHOOTER . SKILL OVER LUCK . 2026</p>
         </div>
 
         <div style={{ display: 'flex', gap: '25px', width: '100%', maxWidth: '900px', padding: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
