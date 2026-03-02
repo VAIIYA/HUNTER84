@@ -44,10 +44,6 @@ const App = () => {
                 {view === 'profile' && <Profile onBack={() => setView('start')} userKey={publicKey?.toBase58()} stats={stats} />}
             </AnimatePresence>
 
-            {/* Retro Sky and Grass Background (CSS/SVG) */}
-            <div className="bg-elements" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '30%', backgroundColor: 'var(--secondary)', borderTop: '4px solid #33691E', zIndex: 1 }}>
-                <div style={{ position: 'absolute', top: '-60px', left: '10%', width: '120px', height: '120px', backgroundColor: 'var(--retro-brown)', borderRadius: '10px 10px 0 0', opacity: 0.1 }}></div>
-            </div>
         </div>
     );
 };
