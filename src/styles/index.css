@@ -1,0 +1,86 @@
+:root {
+  /* Modern Duck Hunt NES Color Palette */
+  --primary: #5BC0EB; /* Sky blue */
+  --secondary: #9BC53D; /* Grass green */
+  --accent: #E55934; /* Duck beak/red */
+  --retro-brown: #332111; /* Dog/Earth */
+  --retro-light: #FDE74C; /* Score area */
+  
+  --bg-dark: #0a0a0c;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --font-modern: 'Outfit', sans-serif;
+  --font-retro: 'Press Start 2P', system-ui;
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: white;
+  font-family: var(--font-modern);
+  overflow: hidden; /* Game is fixed screen */
+}
+
+h1, .retro-text {
+  font-family: var(--font-retro);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.glass-panel {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-retro);
+  transition: var(--transition);
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #3a76a8 0%, #0a0a0c 100%);
+}
+
+.ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.interactive {
+  pointer-events: auto;
+}
