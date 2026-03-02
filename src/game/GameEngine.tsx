@@ -13,6 +13,7 @@ interface Duck {
     status: 'flying' | 'hit' | 'escaped';
     variant: 'normal' | 'blue' | 'red';
     frame: number;
+    birthStamp: number;
 }
 
 interface GameEngineProps {
@@ -58,7 +59,8 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
             vy: -Math.sin(angle) * speed,
             status: 'flying',
             variant: ['normal', 'blue', 'red'][Math.floor(Math.random() * 3)] as any,
-            frame: 0
+            frame: 0,
+            birthStamp: Date.now()
         };
 
         setDucks(prev => [...prev, newDuck]);
@@ -95,9 +97,21 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
                 let nvx = d.vx;
                 let nvy = d.vy;
 
+                // Bounce off walls
                 if (nx <= 0 || nx >= window.innerWidth - DUCK_SIZE) nvx = -nvx;
                 if (ny <= 0) nvy = -nvy;
-                if (ny > window.innerHeight && d.vy > 0) nvy = -nvy;
+
+                // Escape logic: After 6 seconds, just keep flying UP and out
+                const isEscaping = (Date.now() - d.birthStamp) > 6000;
+                if (isEscaping) {
+                    nvy = -Math.abs(nvy) - 2; // Fly UP faster
+                    if (ny < -DUCK_SIZE) {
+                        return { ...d, status: 'escaped' as const, y: -200 };
+                    }
+                } else {
+                    // Normal bounce off bottom of "visible" area (not floor)
+                    if (ny > window.innerHeight - 200) nvy = -Math.abs(nvy);
+                }
 
                 return {
                     ...d,
@@ -115,7 +129,7 @@ export const GameEngine: React.FC<GameEngineProps> = ({ onGameOver }) => {
     // Wave / Game Over Check
     useEffect(() => {
         if (ducksSpawned >= MAX_DUCKS && ducks.length > 0) {
-            const allDucksDone = ducks.every(d => d.status !== 'flying' && d.y > window.innerHeight);
+            const allDucksDone = ducks.every(d => (d.status !== 'flying') || (d.y < -DUCK_SIZE) || (d.y > window.innerHeight + 50));
             if (allDucksDone && !isWavetransition) {
                 if (ducksHit >= 6) { // Pass threshold
                     setIsWaveTransition(true);
